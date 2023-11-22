@@ -1,0 +1,6 @@
+﻿.vs
+.project
+.cproject
+.settings
+*.o
+main
