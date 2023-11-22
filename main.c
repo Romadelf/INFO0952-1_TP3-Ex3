@@ -23,14 +23,21 @@ int main(void)
     // Create the expression
     // ((2 * (y - x)) + (z*z)*(x/(w+x)))
 
-    Expression* expr = exprOp(
-            PLUS,
-            exprOp(TIMES, exprNum(2),
-                   exprOp(MINUS, exprSymb("y"), exprSymb("x"))),
-            exprOp(TIMES,
-                   exprOp(TIMES, exprSymb("z"), exprSymb("z")),
-                   exprOp(DIV, exprSymb("x"),
-                          exprOp(PLUS, exprSymb("w"), exprSymb("x")))));
+    Expression* expr = exprOp(PLUS, //@formatter:off
+                              exprOp(TIMES,
+                                     exprNum(2),
+                                     exprOp(MINUS,
+                                            exprSymb("y"),
+                                            exprSymb("x"))),
+                              exprOp(TIMES,
+                                     exprOp(TIMES,
+                                            exprSymb("z"),
+                                            exprSymb("z")),
+                                     exprOp(DIV,
+                                            exprSymb("x"),
+                                            exprOp(PLUS,
+                                                   exprSymb("w"),
+                                                   exprSymb("x"))))); //@formatter:on
 
     printf("x=%.2f, y=%.2f, z=%.2f, w=%.2f\n\n", x, y, z, w);
 
