@@ -6,21 +6,21 @@
 
 typedef struct Node_t
 {
-    char *key;
-    void *value;
-    struct Node_t *next;
+    char* key;
+    void* value;
+    struct Node_t* next;
 } Node;
 
 struct Dict_t
 {
-    Node **array;
+    Node** array;
     int arraySize;
 };
 
-static unsigned int h(Dict *d, char *key);
-static void terminate(char *m);
+static unsigned int h(Dict* d, char* key);
+static void terminate(char* m);
 
-static unsigned int h(Dict *d, char *key)
+static unsigned int h(Dict* d, char* key)
 {
     unsigned long hash = 5381;
     while (*key != '\0')
@@ -31,15 +31,15 @@ static unsigned int h(Dict *d, char *key)
     return hash % d->arraySize;
 }
 
-static void terminate(char *m)
+static void terminate(char* m)
 {
     printf("%s\n", m);
     exit(EXIT_FAILURE);
 }
 
-Dict *dictCreate(int m)
+Dict* dictCreate(int m)
 {
-    Dict *d = malloc(sizeof(Dict));
+    Dict* d = malloc(sizeof(Dict));
     if (d == NULL)
         terminate("Dict cannot be created");
 
@@ -51,9 +51,9 @@ Dict *dictCreate(int m)
     return d;
 }
 
-void dictFree(Dict *d)
+void dictFree(Dict* d)
 {
-    Node *n, *nn;
+    Node* n, * nn;
     for (int i = 0; i < d->arraySize; i++)
     {
         n = d->array[i];
@@ -70,9 +70,9 @@ void dictFree(Dict *d)
     free(d);
 }
 
-void *dictSearch(Dict *d, char *key)
+void* dictSearch(Dict* d, char* key)
 {
-    Node *p = d->array[h(d, key)];
+    Node* p = d->array[h(d, key)];
     while (p != NULL && strcmp(p->key, key) != 0)
         p = p->next;
 
@@ -82,19 +82,19 @@ void *dictSearch(Dict *d, char *key)
         return NULL;
 }
 
-int dictContains(Dict *d, char *key)
+int dictContains(Dict* d, char* key)
 {
-    Node *p = d->array[h(d, key)];
+    Node* p = d->array[h(d, key)];
     while (p != NULL && strcmp(p->key, key) != 0)
         p = p->next;
 
     return (p != NULL);
 }
 
-void dictInsert(Dict *d, char *key, void *value)
+void dictInsert(Dict* d, char* key, void* value)
 {
     int hashval = h(d, key);
-    Node *p = d->array[hashval];
+    Node* p = d->array[hashval];
     while (p != NULL && strcmp(p->key, key) != 0)
         p = p->next;
 
@@ -103,12 +103,12 @@ void dictInsert(Dict *d, char *key, void *value)
 
     else
     {
-        Node *newNode = malloc(sizeof(Node));
+        Node* newNode = malloc(sizeof(Node));
         if (!newNode)
             terminate("New node cannot be created.");
 
         int len = strlen(key);
-        char *k = malloc((len + 1) * sizeof(char));
+        char* k = malloc((len + 1) * sizeof(char));
         if (!k)
             terminate("New node cannot be created.");
 

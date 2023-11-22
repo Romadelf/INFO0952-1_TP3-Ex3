@@ -7,10 +7,7 @@
 
 typedef enum
 {
-    PLUS,
-    MINUS,
-    TIMES,
-    DIV
+    PLUS, MINUS, TIMES, DIV
 } Operator;
 
 typedef struct Expression_t Expression;
@@ -20,7 +17,7 @@ typedef struct Expression_t Expression;
  *
  * @param exp the expression
  */
-void exprFree(Expression *exp);
+void exprFree(Expression* exp);
 
 /**
  * @brief Create a new expression of symbol type
@@ -28,7 +25,7 @@ void exprFree(Expression *exp);
  * @param var the name of the symbol
  * @return the new expression
  */
-Expression *exprSymb(char *var);
+Expression* exprSymb(char* var);
 
 /**
  * @brief Create a new expression of number type
@@ -36,7 +33,7 @@ Expression *exprSymb(char *var);
  * @param num the number
  * @return the new expression
  */
-Expression *exprNum(double num);
+Expression* exprNum(double num);
 
 /**
  * @brief Create a new expression of operator type
@@ -46,7 +43,7 @@ Expression *exprNum(double num);
  * @param right the right subexpression
  * @return the new expression
  */
-Expression *exprOp(Operator op, Expression *left, Expression *right);
+Expression* exprOp(Operator op, Expression* left, Expression* right);
 
 /**
  * @brief Print the expression in file fp.
@@ -54,7 +51,7 @@ Expression *exprOp(Operator op, Expression *left, Expression *right);
  * @param fp the file in which to print the expression
  * @param exp the expression to be printed
  */
-void exprPrint(FILE *fp, Expression *exp);
+void exprPrint(FILE* fp, Expression* exp);
 
 /**
  * @brief Evaluate the value of the expression using the values of symbol
@@ -65,7 +62,7 @@ void exprPrint(FILE *fp, Expression *exp);
  * @param dict the dictionary with the values of all symbols
  * @return the value of the expression
  */
-double exprEval(Expression *exp, Dict *dict);
+double exprEval(Expression* exp, Dict* dict);
 
 /**
  * @brief Compute a new expression corresponding to the derivative of the
@@ -76,6 +73,6 @@ double exprEval(Expression *exp, Dict *dict);
  * @return the new expression
  */
 
-Expression *exprDerivate(Expression *exp, char *var);
+Expression* exprDerivate(Expression* exp, char* var);
 
 #endif

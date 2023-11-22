@@ -119,17 +119,17 @@ static Expression *exprCopy(Expression *exp)
 // Only enter your code below. You can add additional functions as needed, (but declare
 // them as static).
 
-void exprPrint(FILE *fp, Expression *exp)
+void exprPrint(FILE* fp, Expression* exp)
 {
     // To be filled in.
 }
 
-double exprEval(Expression *exp, Dict *dict)
+double exprEval(Expression* exp, Dict* dict)
 {
     // To be filled in.
 }
 
-Expression *exprDerivate(Expression *exp, char *var)
+Expression* exprDerivate(Expression* exp, char* var)
 {
     // To be filled in.
 }
