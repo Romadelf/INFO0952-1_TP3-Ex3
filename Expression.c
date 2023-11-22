@@ -122,7 +122,7 @@ void exprPrint(FILE* fp, Expression* exp)
     switch (exp->type)
     {
         case NUMBER:
-            fprintf(fp, "%f", exp->value.num);
+            fprintf(fp, "%.6g", exp->value.num);
             break;
         case SYMBOL:
             fprintf(fp, "%s", exp->value.symb);
