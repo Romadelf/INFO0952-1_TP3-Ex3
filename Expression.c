@@ -119,7 +119,46 @@ static Expression* exprCopy(Expression* exp)
 
 void exprPrint(FILE* fp, Expression* exp)
 {
-    // To be filled in.
+    switch (exp->type)
+    {
+        case NUMBER:
+            fprintf(fp, "%f", exp->value.num);
+            break;
+        case SYMBOL:
+            fprintf(fp, "%s", exp->value.symb);
+            break;
+        case OPERATOR:
+            char* sign;
+            switch (exp->value.op)
+            {
+                case PLUS:
+                    sign = "+";
+                    break;
+                case MINUS:
+                    sign = "-";
+                    break;
+                case TIMES:
+                    sign = "*";
+                    break;
+                case DIV:
+                    sign = "/";
+                    break;
+                default:
+                    fprintf(stderr, "exprPrint: unknown operator.\n");
+                    exit(2);
+                    break;
+            }
+            fprintf(fp, "(");
+            exprPrint(fp, exp->left);
+            fprintf(fp, "%s", sign);
+            exprPrint(fp, exp->right);
+            fprintf(fp, ")");
+            break;
+        default:
+            fprintf(stderr, "exprPrint: unknown type.\n");
+            exit(2);
+            break;
+    }
 }
 
 double exprEval(Expression* exp, Dict* dict)
