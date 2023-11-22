@@ -11,9 +11,7 @@
 
 typedef enum
 {
-    NUMBER,
-    OPERATOR,
-    SYMBOL
+    NUMBER, OPERATOR, SYMBOL
 } ExprType;
 
 struct Expression_t
@@ -22,18 +20,18 @@ struct Expression_t
     union
     {
         double num;
-        char *symb;
+        char* symb;
         Operator op;
     } value;
-    Expression *left;
-    Expression *right;
+    Expression* left;
+    Expression* right;
 };
 
 // Constructeurs
 
-Expression *exprSymb(char *var)
+Expression* exprSymb(char* var)
 {
-    Expression *exp = malloc(sizeof(Expression));
+    Expression* exp = malloc(sizeof(Expression));
     if (exp == NULL)
     {
         fprintf(stderr, "exprSymb: could not allocate memory.\n");
@@ -46,9 +44,9 @@ Expression *exprSymb(char *var)
     return exp;
 }
 
-Expression *exprNum(double num)
+Expression* exprNum(double num)
 {
-    Expression *exp = malloc(sizeof(Expression));
+    Expression* exp = malloc(sizeof(Expression));
     if (exp == NULL)
     {
         fprintf(stderr, "exprNum: could not allocate memory.\n");
@@ -61,7 +59,7 @@ Expression *exprNum(double num)
     return exp;
 }
 
-Expression *exprOp(Operator op, Expression *left, Expression *right)
+Expression* exprOp(Operator op, Expression* left, Expression* right)
 {
     if (op != PLUS && op != MINUS && op != TIMES && op != DIV)
     {
@@ -69,7 +67,7 @@ Expression *exprOp(Operator op, Expression *left, Expression *right)
         exit(1);
     }
 
-    Expression *exp = malloc(sizeof(Expression));
+    Expression* exp = malloc(sizeof(Expression));
     if (exp == NULL)
     {
         fprintf(stderr, "exprOp: could not allocate memory.\n");
@@ -82,7 +80,7 @@ Expression *exprOp(Operator op, Expression *left, Expression *right)
     return exp;
 }
 
-void exprFree(Expression *exp)
+void exprFree(Expression* exp)
 {
     if (exp->type == OPERATOR)
     {
@@ -94,7 +92,7 @@ void exprFree(Expression *exp)
     free(exp);
 }
 
-static Expression *exprCopy(Expression *exp)
+static Expression* exprCopy(Expression* exp)
 {
     if (exp == NULL)
     {
