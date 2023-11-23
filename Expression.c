@@ -295,28 +295,3 @@ Expression* exprDerivate(Expression* exp, char* var)
         }
     }
 }
-/*
-static bool isFunctionOf(Expression* exp, char* var)
-{
-    switch (exp->type)
-    {
-        case NUMBER:
-        {
-            return false;
-        }
-        case SYMBOL:
-        {
-            return strEquals(var, exp->value.symb);
-        }
-        case OPERATOR:
-        {
-            return isFunctionOf(exp->left, var) || isFunctionOf(exp->right, var);
-        }
-        default:
-        {
-            fprintf(stderr, "isFunctionOf: unknown type.\n");
-            exit(2);
-        }
-    }
-}
-*/
