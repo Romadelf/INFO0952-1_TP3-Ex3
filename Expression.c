@@ -234,25 +234,26 @@ static bool strEquals(char* str1, char* str2)
     return strcmp(str1, str2) == 0;
 }
 
-static bool isFunctionOf(Expression* exp, char* var)
+static bool areIndependent(Expression* exp, char* var)
 {
     switch (exp->type)
     {
         case NUMBER:
         {
-            return false;
+            return true;
         }
         case SYMBOL:
         {
-            return strEquals(var, exp->value.symb);
+            return !strEquals(var, exp->value.symb);
         }
         case OPERATOR:
         {
-            return isFunctionOf(exp->left, var) || isFunctionOf(exp->right, var);
+            return areIndependent(exp->left, var)
+                    && areIndependent(exp->right, var);
         }
         default:
         {
-            fprintf(stderr, "isFunctionOf: unknown type.\n");
+            fprintf(stderr, "areIndependent: unknown type.\n");
             exit(2);
         }
     }
@@ -272,17 +273,17 @@ Expression* exprDerivate(Expression* exp, char* var)
         }
         case OPERATOR:
         {
-            if (!isFunctionOf(exp, var))
+            if (areIndependent(exp, var))
                 return exprNum(0);
 
             switch (exp->value.op)
             {
                 case PLUS:
                 {
-                    if (!isFunctionOf(exp->left, var))
+                    if (areIndependent(exp->left, var))
                         return exprDerivate(exp->right, var);
 
-                    if (!isFunctionOf(exp->right, var))
+                    if (areIndependent(exp->right, var))
                         return exprDerivate(exp->left, var);
 
                     return exprOp(PLUS, //@formatter:off
@@ -291,12 +292,12 @@ Expression* exprDerivate(Expression* exp, char* var)
                 }
                 case MINUS:
                 {
-                    if (!isFunctionOf(exp->left, var)) //@formatter:off
+                    if (areIndependent(exp->left, var)) //@formatter:off
                         return exprOp(MINUS,
                                       exprNum(0),
                                       exprDerivate(exp->right, var)); //@formatter:on
 
-                    if (!isFunctionOf(exp->right, var))
+                    if (areIndependent(exp->right, var))
                         return exprDerivate(exp->left, var);
 
                     return exprOp(MINUS, //@formatter:off
@@ -305,12 +306,12 @@ Expression* exprDerivate(Expression* exp, char* var)
                 }
                 case TIMES:
                 {
-                    if (!isFunctionOf(exp->left, var))
+                    if (areIndependent(exp->left, var))
                         return exprOp(TIMES, //@formatter:off
                                       exprCopy(exp->left),
                                       exprDerivate(exp->right, var)); //@formatter:on
 
-                    if (!isFunctionOf(exp->right, var))
+                    if (areIndependent(exp->right, var))
                         return exprOp(TIMES, //@formatter:off
                                       exprCopy(exp->right),
                                       exprDerivate(exp->left, var)); //@formatter:on
@@ -325,7 +326,7 @@ Expression* exprDerivate(Expression* exp, char* var)
                 }
                 case DIV:
                 {
-                    if (!isFunctionOf(exp->left, var))
+                    if (areIndependent(exp->left, var))
                         return exprOp(TIMES, //@formatter:off
                                       exprOp(MINUS,
                                              exprNum(0),
@@ -336,7 +337,7 @@ Expression* exprDerivate(Expression* exp, char* var)
                                                     exprCopy(exp->right),
                                                     exprCopy(exp->right)))); //@formatter:on
 
-                    if (!isFunctionOf(exp->right, var))
+                    if (areIndependent(exp->right, var))
                     {
                         Expression* altExp = exprOp(TIMES, //@formatter:off
                                                     exprOp(DIV,
