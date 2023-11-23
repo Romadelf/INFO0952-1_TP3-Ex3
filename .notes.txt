@@ -1,0 +1,3 @@
+Demander ce qu'il est mieux de faire contre <<warning: a label can only be part of a statement and a declaration is not a statement>> :
+	1) utiliser des blocs {} ou ; ? Dans ce dernier cas, le formatter en fait une ligne vide sauf si un moyen de contourner existe.
+	2) Faudrait-il être uniforme ou bien le faire uniquement là où c'est nécessaire (assignation de variable) ?
