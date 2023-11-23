@@ -1,3 +1,5 @@
+// See full repo including dev notes at https://github.com/Romadelf/INFO0952-1_TP3-Ex3 (access will be made public after late due date)
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
