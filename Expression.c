@@ -229,11 +229,73 @@ double exprEval(Expression* exp, Dict* dict)
     }
 }
 
-Expression* exprDerivate(Expression* exp, char* var)
+static bool strEquals(char* str1, char* str2)
 {
-    // To be filled in.
+    return strcmp(str1, str2) == 0;
 }
 
+Expression* exprDerivate(Expression* exp, char* var)
+{
+    switch (exp->type)
+    {
+        case NUMBER:
+        {
+            return exprNum(0);
+        }
+        case SYMBOL:
+        {
+            return exprNum(strEquals(var, exp->value.symb));
+        }
+        case OPERATOR:
+        {
+            switch (exp->value.op)
+            {
+                case PLUS:
+                case MINUS:
+                {
+                    return exprOp(exp->value.op, //@formatter:off
+                                  exprDerivate(exp->left, var),
+                                  exprDerivate(exp->right, var)); //@formatter:on
+                }
+                case TIMES:
+                {
+                    return exprOp(PLUS, //@formatter:off
+                                  exprOp(TIMES,
+                                         exprDerivate(exp->left, var),
+                                         exprCopy(exp->right)),
+                                  exprOp(TIMES,
+                                         exprCopy(exp->left),
+                                         exprDerivate(exp->right, var))); //@formatter:on
+                }
+                case DIV:
+                {
+                    return exprOp(DIV, //@formatter:off
+                                  exprOp(MINUS,
+                                         exprOp(TIMES,
+                                                exprDerivate(exp->left, var),
+                                                exprCopy(exp->right)),
+                                         exprOp(TIMES,
+                                                exprCopy(exp->left),
+                                                exprDerivate(exp->right, var))),
+                                  exprOp(TIMES,
+                                         exprCopy(exp->right),
+                                         exprCopy(exp->right))); //@formatter:on
+                }
+                default:
+                {
+                    fprintf(stderr, "exprDerivate: unknown operator.\n");
+                    exit(2);
+                }
+            }
+        }
+        default:
+        {
+            fprintf(stderr, "exprDerivate: unknown type.\n");
+            exit(2);
+        }
+    }
+}
+/*
 static bool isFunctionOf(Expression* exp, char* var)
 {
     switch (exp->type)
@@ -244,7 +306,7 @@ static bool isFunctionOf(Expression* exp, char* var)
         }
         case SYMBOL:
         {
-            return strcmp(var, exp->value.symb) == 0;
+            return strEquals(var, exp->value.symb);
         }
         case OPERATOR:
         {
@@ -257,3 +319,4 @@ static bool isFunctionOf(Expression* exp, char* var)
         }
     }
 }
+*/
