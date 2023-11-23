@@ -189,8 +189,7 @@ double exprEval(Expression* exp, Dict* dict)
         }
         case SYMBOL:
         {
-            double* symbolValue = dictSearch(dict, exp->value.symb);
-            return *symbolValue;
+            return *((double*)dictSearch(dict, exp->value.symb));
         }
         case OPERATOR:
         {
