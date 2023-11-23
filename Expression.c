@@ -125,7 +125,7 @@ void exprPrint(FILE* fp, Expression* exp)
     {
         case NUMBER:
         {
-            fprintf(fp, "%.6g", exp->value.num);
+            fprintf(fp, "%f", exp->value.num);
             break;
         }
         case SYMBOL:
