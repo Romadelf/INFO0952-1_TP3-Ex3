@@ -233,3 +233,27 @@ Expression* exprDerivate(Expression* exp, char* var)
 {
     // To be filled in.
 }
+
+static bool isFunctionOf(Expression* exp, char* var)
+{
+    switch (exp->type)
+    {
+        case NUMBER:
+        {
+            return false;
+        }
+        case SYMBOL:
+        {
+            return strcmp(var, exp->value.symb) == 0;
+        }
+        case OPERATOR:
+        {
+            return isFunctionOf(exp->left, var) || isFunctionOf(exp->right, var);
+        }
+        default:
+        {
+            fprintf(stderr, "isFunctionOf: unknown type.\n");
+            exit(2);
+        }
+    }
+}
