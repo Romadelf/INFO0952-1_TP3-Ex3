@@ -1,4 +1,4 @@
-// See full repo including dev notes at https://github.com/Romadelf/INFO0952-1_TP3-Ex3 (access will be made public after late due date)
+// See full repo including dev notes and bonus branch at https://github.com/Romadelf/INFO0952-1_TP3-Ex3 (access will be made public after late due date)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -234,6 +234,30 @@ static bool strEquals(char* str1, char* str2)
     return strcmp(str1, str2) == 0;
 }
 
+static bool isFunctionOf(Expression* exp, char* var)
+{
+    switch (exp->type)
+    {
+        case NUMBER:
+        {
+            return false;
+        }
+        case SYMBOL:
+        {
+            return strEquals(var, exp->value.symb);
+        }
+        case OPERATOR:
+        {
+            return isFunctionOf(exp->left, var) || isFunctionOf(exp->right, var);
+        }
+        default:
+        {
+            fprintf(stderr, "isFunctionOf: unknown type.\n");
+            exit(2);
+        }
+    }
+}
+
 Expression* exprDerivate(Expression* exp, char* var)
 {
     switch (exp->type)
@@ -248,17 +272,49 @@ Expression* exprDerivate(Expression* exp, char* var)
         }
         case OPERATOR:
         {
+            if (!isFunctionOf(exp, var))
+                return exprNum(0);
+
             switch (exp->value.op)
             {
                 case PLUS:
+                {
+                    if (!isFunctionOf(exp->left, var))
+                        return exprDerivate(exp->right, var);
+
+                    if (!isFunctionOf(exp->right, var))
+                        return exprDerivate(exp->left, var);
+
+                    return exprOp(PLUS, //@formatter:off
+                                  exprDerivate(exp->left, var),
+                                  exprDerivate(exp->right, var)); //@formatter:on
+                }
                 case MINUS:
                 {
-                    return exprOp(exp->value.op, //@formatter:off
+                    if (!isFunctionOf(exp->left, var)) //@formatter:off
+                        return exprOp(MINUS,
+                                      exprNum(0),
+                                      exprDerivate(exp->right, var)); //@formatter:on
+
+                    if (!isFunctionOf(exp->right, var))
+                        return exprDerivate(exp->left, var);
+
+                    return exprOp(MINUS, //@formatter:off
                                   exprDerivate(exp->left, var),
                                   exprDerivate(exp->right, var)); //@formatter:on
                 }
                 case TIMES:
                 {
+                    if (!isFunctionOf(exp->left, var))
+                        return exprOp(TIMES, //@formatter:off
+                                      exprCopy(exp->left),
+                                      exprDerivate(exp->right, var)); //@formatter:on
+
+                    if (!isFunctionOf(exp->right, var))
+                        return exprOp(TIMES, //@formatter:off
+                                      exprCopy(exp->right),
+                                      exprDerivate(exp->left, var)); //@formatter:on
+
                     return exprOp(PLUS, //@formatter:off
                                   exprOp(TIMES,
                                          exprDerivate(exp->left, var),
@@ -269,6 +325,29 @@ Expression* exprDerivate(Expression* exp, char* var)
                 }
                 case DIV:
                 {
+                    if (!isFunctionOf(exp->left, var))
+                        return exprOp(TIMES, //@formatter:off
+                                      exprOp(MINUS,
+                                             exprNum(0),
+                                             exprCopy(exp->left)),
+                                      exprOp(DIV,
+                                             exprDerivate(exp->right, var),
+                                             exprOp(TIMES,
+                                                    exprCopy(exp->right),
+                                                    exprCopy(exp->right)))); //@formatter:on
+
+                    if (!isFunctionOf(exp->right, var))
+                    {
+                        Expression* altExp = exprOp(TIMES, //@formatter:off
+                                                    exprOp(DIV,
+                                                           exprNum(1),
+                                                           exprCopy(exp->right)),
+                                                    exprCopy(exp->left)); //@formatter:on
+                        Expression* derivate = exprDerivate(altExp, var);
+                        exprFree(altExp);
+                        return derivate;
+                    }
+
                     return exprOp(DIV, //@formatter:off
                                   exprOp(MINUS,
                                          exprOp(TIMES,
@@ -295,28 +374,3 @@ Expression* exprDerivate(Expression* exp, char* var)
         }
     }
 }
-/*
-static bool isFunctionOf(Expression* exp, char* var)
-{
-    switch (exp->type)
-    {
-        case NUMBER:
-        {
-            return false;
-        }
-        case SYMBOL:
-        {
-            return strEquals(var, exp->value.symb);
-        }
-        case OPERATOR:
-        {
-            return isFunctionOf(exp->left, var) || isFunctionOf(exp->right, var);
-        }
-        default:
-        {
-            fprintf(stderr, "isFunctionOf: unknown type.\n");
-            exit(2);
-        }
-    }
-}
-*/
